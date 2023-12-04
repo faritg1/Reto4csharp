@@ -3,82 +3,73 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PruebaPushUp.Retos
-{
-    public class RetoCuatro
+namespace PruebaPushUp.Retos;
+public class RetoCuatro{
+    public void reto4(){
     {
-        public void reto4(){
-        while (true)
-        {
-            Console.Clear();
-            Console.Write("Ingrese la cantidad de universidades que participan en el proceso: ");
-            int cantidadUniversidades = int.Parse(Console.ReadLine());
+        Console.Write("Ingrese la cantidad de universidades que participan en el proceso: ");
+        int cantidadUniversidades = int.Parse(Console.ReadLine());
 
-            int universidadesAceptan = 0;
-            int universidadesRechazan = 0;
-            int universidadesEmpate = 0;
+        List<Universidad> universidades = new List<Universidad>();
 
-            for (int i = 0; i < cantidadUniversidades; i++)
+        for (int i = 0; i < cantidadUniversidades; i++){
+            Console.Write($"Ingrese el nombre de la universidad {i + 1}: ");
+            string nombre = Console.ReadLine();
+
+            Console.WriteLine("Ingrese los votos de los alumnos (A: aceptar, R: rechazar, N: nulo, B: blanco). Terminar con X:");
+
+            List<string> votos = new List<string>();
+            string voto;
+            do
             {
-                Console.Write("Ingrese el nombre de la universidad: ");
-                string nombreUniversidad = Console.ReadLine();
+                Console.Write("Voto: ");
+                voto = Console.ReadLine().ToUpper();
 
-                int votosA = 0;
-                int votosR = 0;
-                int votosN = 0;
-                int votosB = 0;
-
-                while (true)
+                if (voto == "A" || voto == "R" || voto == "N" || voto == "B")
                 {
-                    Console.WriteLine("Ingrese el voto de un alumno (A, R, N, B) o X para terminar\n");
-                    string voto = Console.ReadLine();
-
-                    if (voto == "A" || voto == "a")
-                    {
-                        votosA++;
-                    }
-                    else if (voto == "R" || voto == "r")
-                    {
-                        votosR++;
-                    }
-                    else if (voto == "N" || voto == "n")
-                    {
-                        votosN++;
-                    }
-                    else if (voto == "B" || voto == "b")
-                    {
-                        votosB++;
-                    }
-                    else if (voto == "X" || voto == "x")
-                    {
-                        break;
-                    }
+                    votos.Add(voto);
                 }
-
-                Console.Write($"{nombreUniversidad}: {votosA} Aceptan, {votosR} Rechazan, {votosB} Blancos, {votosN} Nulos\n");
-
-                if (votosA > votosR)
+                else if (voto != "X")
                 {
-                    universidadesAceptan++;
+                    Console.WriteLine("Voto inválido. Intente nuevamente.");
                 }
-                else if (votosR > votosA)
-                {
-                    universidadesRechazan++;
-                }
-                else
-                {
-                    universidadesEmpate++;
-                }
-            }
+            } while (voto != "X");
 
-            Console.WriteLine("Universidades que aceptan: " + universidadesAceptan);
-            Console.WriteLine("Universidades que rechazan: " + universidadesRechazan);
-            Console.WriteLine("Universidades con empate: " + universidadesEmpate);
-
-            Console.WriteLine("Presione cualquier tecla para continuar...");
-            Console.ReadKey();
-            break;
+            universidades.Add(new Universidad(nombre, votos));
         }
+
+        MostrarResultados(universidades);
+    }
+
+    static void MostrarResultados(List<Universidad> universidades){
+        int aceptan = universidades.Count(u => u.TotalVotos("A") > u.TotalVotos("R"));
+        int rechazan = universidades.Count(u => u.TotalVotos("R") > u.TotalVotos("A"));
+        int empate = universidades.Count(u => u.TotalVotos("A") == u.TotalVotos("R"));
+
+        Console.WriteLine($"Resultados de la votación:");
+        Console.WriteLine($"Universidades que aceptan: {aceptan}");
+        Console.WriteLine($"Universidades que rechazan: {rechazan}");
+        Console.WriteLine($"Universidades con empate: {empate}");
+    }
+    }
+
+    class Universidad
+    {
+        public string Nombre { get; }
+        public List<string> Votos { get; }
+        public Universidad(string nombre, List<string> votos)
+        {
+            Nombre = nombre;
+            Votos = votos;
+        }
+        public int TotalVotos(string opcion)
+        {
+            return Votos.Count(v => v == opcion);
         }
     }
 }
+
+
+
+
+
